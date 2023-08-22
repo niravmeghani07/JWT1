@@ -20,6 +20,11 @@ const data = [
     username: 'Kyle',
     password: '1234abcd',
     title: 'Post 2'
+    },
+    {
+     username: 'Vinod',
+     password: 'bxcd56&9',
+     title: 'Mechanic'
     }
 ]
 
@@ -29,12 +34,21 @@ app.get('/',(req,res)=>{
 
 app.get('/login',(req,res)=>{
     res.render('login');
-   
 })
 
 // Retrieving the data authorized to a perticular user after comparing tokens
 app.get('/posts',authenticateToken,(req,res)=>{
-    res.json(data.filter(item => item.username === req.user.name));
+    const user = data.find(item => item.username === req.user.name);
+
+    console.log(user);
+
+    if (user.title === 'Supervisor') {
+        res.json(data.filter(item => item.title === 'Mechanic'));
+    } else if (user.title === 'Mechanic') {
+        res.json(data.filter(item => item.username === req.user.name));
+    } else {
+        res.sendStatus(403);
+    }
 })
 
 //Creating a JWT of a user after logging in
